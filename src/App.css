@@ -1,38 +1,315 @@
+/* Reset và font chung */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff; /* nền trắng */
+  color: #333;
+}
+
+/* Container chính */
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
+/* Header chung cho các trang */
 .App-header {
-  background-color: #282c34;
+  background-color: #fcfdff; /* nền trắng xanh nhạt */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 40px;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #333; /* chữ tối dễ đọc */
 }
 
-.App-link {
-  color: #61dafb;
+/* Navbar */
+/* Navbar cơ bản với gradient */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0473ce; /* xanh ngọc */
+  padding: 10px 20px;
+  color: #fff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Liên kết menu */
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 15px;
+}
+
+.nav-links li a,
+.logout-btn {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.nav-links li a:hover,
+.logout-btn:hover {
+  color: #000;
+}
+
+/* Hamburger menu */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.hamburger span {
+  height: 3px;
+  width: 25px;
+  background: #fff;
+  margin: 4px;
+  border-radius: 2px;
+}
+
+/* Responsive cho mobile/tablet */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
   }
-  to {
-    transform: rotate(360deg);
+
+  .nav-links {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: linear-gradient(90deg, #d32f2f, #ffffff, #1976d2);
+    flex-direction: column;
+    width: 220px;
+    display: none;
+    padding: 15px;
+    border-radius: 4px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li {
+    margin: 10px 0;
+  }
+}
+
+/* Nút chung (login, logout, register, booking...) */
+.logout-btn {
+  background-color: #d32f2f;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s;
+  font-weight: bold;
+}
+
+.logout-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* Input chung */
+.login-input {
+  width: 250px;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #1976d2;
+  border-radius: 4px;
+}
+
+/* Card hiển thị phòng */
+.room-card {
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #d32f2f;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 10px auto;
+  width: 80%;
+  text-align: left;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+/* Container bảng */
+.table-container {
+  width: 95%;
+  overflow-x: auto; /* Cho phép cuộn ngang trên mobile */
+  margin: 0 auto;
+}
+
+/* Bảng booking */
+.booking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.booking-table th, .booking-table td {
+  border: 1px solid #1976d2;
+  padding: 8px;
+  text-align: center;
+}
+
+.booking-table th {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.booking-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .booking-table th, .booking-table td {
+    font-size: 12px;
+    padding: 6px;
+  }
+  .login-input {
+    width: 180px;
+  }
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-table th, .booking-table td {
+    font-size: 10px;
+    padding: 4px;
+  }
+  .login-input {
+    width: 150px;
+  }
+  .logout-btn {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+}
+
+.footer {
+  background: #222;
+  color: #fff;
+  padding: 40px 20px;
+  margin-top: 40px;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 250px;
+  margin: 10px;
+}
+
+.footer-column h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #f0c040;
+}
+
+.footer-column p {
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin: 8px 0;
+}
+
+.footer-column ul li a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-column ul li a:hover {
+  color: #f0c040;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+  border-top: 1px solid #444;
+  padding-top: 15px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+/* 📱 Responsive cho tablet và mobile */
+@media (max-width: 992px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-column {
+    margin: 20px 0;
+  }
+
+  .footer-column ul li {
+    margin: 5px 0;
+  }
+}
+
+.admin-dashboard-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 15px; /* khoảng cách giữa các nút */
+}
+
+.admin-btn {
+  background-color: #f0c040;
+  color: #222;
+  padding: 12px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+  min-width: 180px;
+  text-align: center;
+}
+
+.admin-btn:hover {
+  background-color: #d9a030;
+  color: #fff;
+}
+
+/* 📱 Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+  .admin-dashboard-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .admin-btn {
+    width: 90%; /* nút chiếm gần hết chiều ngang */
   }
 }
