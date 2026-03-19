@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
@@ -13,16 +13,8 @@ export default function AdminUserManagement() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  useEffect(() => {
-    if (!token || role !== "admin") {
-      alert("Bạn không có quyền truy cập!");
-      navigate("/login");
-    } else {
-      fetchUsers();
-    }
-  }, [token, role, navigate]);
-
-  const fetchUsers = async () => {
+  // ✅ Định nghĩa fetchUsers với useCallback
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API}/users`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -31,7 +23,16 @@ export default function AdminUserManagement() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (!token || role !== "admin") {
+      alert("Bạn không có quyền truy cập!");
+      navigate("/login");
+    } else {
+      fetchUsers();
+    }
+  }, [token, role, navigate, fetchUsers]); // ✅ thêm fetchUsers vào dependency array
 
   const handleLockToggle = async (id) => {
     try {
@@ -80,6 +81,7 @@ export default function AdminUserManagement() {
       alert("Lỗi gửi thông báo!");
     }
   };
+
 
   return (
     <div className="App-header">
