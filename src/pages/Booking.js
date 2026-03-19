@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
@@ -15,26 +15,22 @@ export default function Booking() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
- useEffect(() => {
-  if (!token || role !== "user") {
-    alert("Bạn cần đăng nhập bằng tài khoản user để đặt phòng!");
-    navigate("/login");
-  } else {
-    const fetchRooms = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API}/rooms`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const availableRooms = res.data.filter(r => r.status === "available");
-        setRooms(availableRooms);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  // Định nghĩa fetchRooms với useCallback
+  const fetchRooms = useCallback(async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API}/rooms`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const availableRooms = res.data.filter(r => r.status === "available");
+      setRooms(availableRooms);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [token]);
 
-    const fetchMyBookings = async () => {
-      // code gọi API lấy bookings
-      try {
+  // Định nghĩa fetchMyBookings với useCallback
+  const fetchMyBookings = useCallback(async () => {
+    try {
       const res = await axios.get(`${process.env.REACT_APP_API}/bookings`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -42,15 +38,17 @@ export default function Booking() {
     } catch (err) {
       console.error(err);
     }
-    };
+  }, [token]);
 
-    fetchRooms();
-    fetchMyBookings();
-  }
-}, [token, role, navigate]);
-
-
-
+  useEffect(() => {
+    if (!token || role !== "user") {
+      alert("Bạn cần đăng nhập bằng tài khoản user để đặt phòng!");
+      navigate("/login");
+    } else {
+      fetchRooms();
+      fetchMyBookings();
+    }
+  }, [token, role, navigate, fetchRooms, fetchMyBookings]);
 
   const handleBooking = async () => {
     if (!roomId || !checkin || !checkout) {
@@ -100,7 +98,6 @@ export default function Booking() {
   return (
     <div className="App-header">
       <h2>Đặt phòng</h2>
-
       {/* Form đặt phòng */}
       <div>
         <label>Chọn phòng trống: </label>
@@ -113,22 +110,18 @@ export default function Booking() {
           ))}
         </select>
       </div>
-
       <div>
         <label>Ngày nhận phòng: </label>
         <input type="date" value={checkin} onChange={e => setCheckin(e.target.value)} className="login-input" />
       </div>
-
       <div>
         <label>Ngày trả phòng: </label>
         <input type="date" value={checkout} onChange={e => setCheckout(e.target.value)} className="login-input" />
       </div>
-
       <div>
         <label>Dịch vụ (vd: ăn uống, thay drap): </label>
         <input value={services} onChange={e => setServices(e.target.value)} className="login-input" />
       </div>
-
       <button className="logout-btn" onClick={handleBooking} style={{ marginTop: "10px" }}>
         Đặt phòng
       </button>

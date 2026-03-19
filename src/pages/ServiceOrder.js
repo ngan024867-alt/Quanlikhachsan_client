@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import "../App.css";
 
@@ -9,22 +9,21 @@ export default function ServiceOrder() {
 
   const token = localStorage.getItem("token");
 
-  // Lấy lịch sử dịch vụ của chính user từ token
- useEffect(() => {
-  fetchOrders();
-}, [fetchOrders]);
-const fetchOrders = useCallback(async () => {
-  try {
-    const res = await axios.get(`${process.env.REACT_APP_API}/services/my`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setOrders(res.data || []);
-  } catch (err) {
-    console.error("Lỗi lấy dịch vụ:", err);
-    setOrders([]);
-  }
-}, [token]);
+  const fetchOrders = useCallback(async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API}/services/my`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setOrders(res.data || []);
+    } catch (err) {
+      console.error("Lỗi lấy dịch vụ:", err);
+      setOrders([]);
+    }
+  }, [token]);
 
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

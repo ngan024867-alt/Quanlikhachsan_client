@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
@@ -14,25 +14,26 @@ export default function BookingsManagement() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-useEffect(() => {
-  if (!token || role !== "admin") {
-    alert("Bạn không có quyền truy cập!");
-    navigate("/login");
-  } else {
-    const fetchBookings = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API}/bookings`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setBookings(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchBookings();
-  }
-}, [token, role, navigate]);
+  // Định nghĩa fetchBookings với useCallback
+  const fetchBookings = useCallback(async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API}/bookings`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setBookings(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [token]);
 
+  useEffect(() => {
+    if (!token || role !== "admin") {
+      alert("Bạn không có quyền truy cập!");
+      navigate("/login");
+    } else {
+      fetchBookings();
+    }
+  }, [token, role, navigate, fetchBookings]);
 
   const handleCheckin = async (id) => {
     try {
@@ -57,6 +58,9 @@ useEffect(() => {
       alert("Lỗi checkout!");
     }
   };
+
+
+
 
   // Lọc và tìm kiếm theo trạng thái
   const filteredBookings = bookings.filter(booking => {
@@ -83,7 +87,6 @@ useEffect(() => {
   return (
     <div className="App-header">
       <h2>Quản lý đặt phòng</h2>
-
       {/* Tìm kiếm và lọc */}
       <div style={{ marginBottom: "20px" }}>
         <input

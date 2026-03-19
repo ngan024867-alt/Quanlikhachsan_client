@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
@@ -12,25 +12,27 @@ export default function RoomsManagement() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-useEffect(() => {
-  if (!token || role !== "admin") {
-    alert("Bạn không có quyền truy cập!");
-    navigate("/login");
-  } else {
-    const fetchRooms = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API}/rooms`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setRooms(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchRooms();
-  }
-}, [token, role, navigate]);
+  // Định nghĩa fetchRooms với useCallback
+  const fetchRooms = useCallback(async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API}/rooms`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log("data");
+      setRooms(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [token]);
 
+  useEffect(() => {
+    if (!token || role !== "admin") {
+      alert("Bạn không có quyền truy cập!");
+      navigate("/login");
+    } else {
+      fetchRooms();
+    }
+  }, [token, role, navigate, fetchRooms]);
 
   const handleAddRoom = async () => {
     try {
@@ -75,6 +77,7 @@ useEffect(() => {
       alert("Lỗi cập nhật phòng!");
     }
   };
+
 
   return (
     <div className="App-header">

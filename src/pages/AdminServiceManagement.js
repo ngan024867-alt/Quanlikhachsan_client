@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
@@ -10,25 +10,27 @@ export default function AdminServiceManagement() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-useEffect(() => {
-  if (!token || role !== "admin") {
-    alert("Bạn không có quyền truy cập!");
-    navigate("/login");
-  } else {
-    const fetchOrders = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API}/services`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setOrders(res.data || []);
-      } catch (err) {
-        setOrders([]);
-      }
-    };
-    fetchOrders();
-  }
-}, [token, role, navigate]);
+  // Định nghĩa fetchOrders với useCallback
+  const fetchOrders = useCallback(async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API}/services`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setOrders(res.data || []);
+    } catch (err) {
+      console.error("❌ Lỗi lấy dịch vụ:", err);
+      setOrders([]);
+    }
+  }, [token]);
 
+  useEffect(() => {
+    if (!token || role !== "admin") {
+      alert("Bạn không có quyền truy cập!");
+      navigate("/login");
+    } else {
+      fetchOrders();
+    }
+  }, [token, role, navigate, fetchOrders]);
 
   const handleUpdateStatus = async (id, status) => {
     try {

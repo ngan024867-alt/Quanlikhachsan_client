@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
@@ -14,25 +14,26 @@ export default function Rooms() {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
-useEffect(() => {
-  if (!token) {
-    alert("Bạn cần đăng nhập để xem danh sách phòng!");
-    navigate("/login");
-  } else {
-    const fetchRooms = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API}/rooms`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setRooms(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchRooms();
-  }
-}, [token, navigate]);
+  // Định nghĩa fetchRooms với useCallback
+  const fetchRooms = useCallback(async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API}/rooms`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRooms(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [token]);
 
+  useEffect(() => {
+    if (!token) {
+      alert("Bạn cần đăng nhập để xem danh sách phòng!");
+      navigate("/login");
+    } else {
+      fetchRooms();
+    }
+  }, [token, navigate, fetchRooms]);
 
   const handleBooking = async () => {
     if (!checkin || !checkout) {
@@ -58,7 +59,7 @@ useEffect(() => {
       setCheckin("");
       setCheckout("");
       setServices("");
-      fetchRooms();
+      fetchRooms(); // gọi lại để refresh dữ liệu
     } catch (err) {
       alert("Lỗi đặt phòng!");
     }
