@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
@@ -27,9 +27,7 @@ export default function Booking() {
 
   const fetchRooms = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/rooms", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/rooms");
       const availableRooms = res.data.filter(r => r.status === "available");
       setRooms(availableRooms);
     } catch (err) {
@@ -39,9 +37,7 @@ export default function Booking() {
 
   const fetchMyBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/bookings", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/bookings");
       setMyBookings(res.data);
     } catch (err) {
       console.error(err);
@@ -54,13 +50,11 @@ export default function Booking() {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/api/bookings", {
+      await api.post("/bookings", {
         room: roomId,
         checkin,
         checkout,
         services: services ? services.split(",") : []
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       alert("Đặt phòng thành công!");
       setRoomId("");
@@ -77,23 +71,20 @@ export default function Booking() {
   const handleCancelBooking = async (id) => {
     if (window.confirm("Bạn có chắc muốn hủy đặt phòng này?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/bookings/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/bookings/${id}`);
         alert("Hủy đặt phòng thành công!");
         fetchRooms();
         fetchMyBookings();
-      } catch (err) {
-        alert("Lỗi hủy đặt phòng!");
-      }
+    } catch (err) {
+      alert("Lỗi hủy đặt phòng!");
     }
   };
+  }
 
   return (
     <div className="App-header">
       <h2>Đặt phòng</h2>
 
-      {/* Form đặt phòng */}
       <div>
         <label>Chọn phòng trống: </label>
         <select value={roomId} onChange={e => setRoomId(e.target.value)} className="login-input">
@@ -125,7 +116,6 @@ export default function Booking() {
         Đặt phòng
       </button>
 
-      {/* Danh sách booking của user */}
       <h2 style={{ marginTop: "30px" }}>Lịch sử đặt phòng của tôi</h2>
       {myBookings.length === 0 ? (
         <p>Bạn chưa có lịch sử đặt phòng nào.</p>
@@ -169,3 +159,4 @@ export default function Booking() {
     </div>
   );
 }
+

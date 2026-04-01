@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
@@ -10,22 +10,20 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await api.post("/auth/login", {
         username,
         password
       });
 
-      // Lưu token, role và userId vào localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
-      if (res.data.userId) {
-        localStorage.setItem("userId", res.data.userId);
-      }
+      localStorage.setItem("userId", res.data.userId || res.data.data?._id);
 
-      alert("Đăng nhập thành công!");
-      navigate("/"); // chuyển sang trang Home
+      // toast.success("Đăng nhập thành công!");
+      navigate("/");
     } catch (err) {
-      alert("Sai tài khoản hoặc mật khẩu!");
+      // toast.error(err.response?.data?.error || "Lỗi đăng nhập!");
+      alert(err.response?.data?.error || "Lỗi đăng nhập!");
     }
   };
 
@@ -34,14 +32,14 @@ export default function Login() {
       <h2>Đăng nhập</h2>
       <input
         className="login-input"
-        placeholder="Username"
+        placeholder="Tên đăng nhập"
         value={username}
         onChange={e => setUsername(e.target.value)}
       />
       <input
         className="login-input"
         type="password"
-        placeholder="Password"
+        placeholder="Mật khẩu"
         value={password}
         onChange={e => setPassword(e.target.value)}
       />

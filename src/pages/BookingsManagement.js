@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
@@ -25,9 +25,7 @@ export default function BookingsManagement() {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/bookings", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/bookings");
       setBookings(res.data);
     } catch (err) {
       console.error(err);
@@ -36,9 +34,7 @@ export default function BookingsManagement() {
 
   const handleCheckin = async (id) => {
     try {
-      await axios.post(`http://localhost:5000/api/bookings/checkin/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post(`/bookings/checkin/${id}`);
       alert("Xác nhận ngày nhận phòng thực tế thành công!");
       fetchBookings();
     } catch (err) {
@@ -46,11 +42,9 @@ export default function BookingsManagement() {
     }
   };
 
-  const handleCheckout = async (id, roomId) => {
+  const handleCheckout = async (id) => {
     try {
-      await axios.post(`http://localhost:5000/api/bookings/checkout/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post(`/bookings/checkout/${id}`);
       alert("Checkout thành công và phòng đã được cập nhật trạng thái!");
       fetchBookings();
     } catch (err) {
@@ -58,7 +52,6 @@ export default function BookingsManagement() {
     }
   };
 
-  // Lọc và tìm kiếm theo trạng thái
   const filteredBookings = bookings.filter(booking => {
     const matchSearch = booking.user?.username?.toLowerCase().includes(searchTerm.toLowerCase());
     let matchStatus = true;
@@ -74,7 +67,6 @@ export default function BookingsManagement() {
     return matchSearch && matchStatus;
   });
 
-  // Phân trang
   const indexOfLastBooking = currentPage * bookingsPerPage;
   const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
   const currentBookings = filteredBookings.slice(indexOfFirstBooking, indexOfLastBooking);
@@ -84,7 +76,6 @@ export default function BookingsManagement() {
     <div className="App-header">
       <h2>Quản lý đặt phòng</h2>
 
-      {/* Tìm kiếm và lọc */}
       <div style={{ marginBottom: "20px" }}>
         <input
           className="login-input"
@@ -105,7 +96,6 @@ export default function BookingsManagement() {
         </select>
       </div>
 
-      {/* Bảng hiển thị booking */}
       <div className="table-container">
         <table className="booking-table">
           <thead>
@@ -149,7 +139,7 @@ export default function BookingsManagement() {
                       <button
                         className="logout-btn"
                         style={{ marginLeft: "10px" }}
-                        onClick={() => handleCheckout(booking._id, booking.room?._id)}
+                        onClick={() => handleCheckout(booking._id)}
                       >
                         Trả phòng
                       </button>
@@ -162,7 +152,6 @@ export default function BookingsManagement() {
         </table>
       </div>
 
-      {/* Phân trang */}
       <div style={{ marginTop: "20px" }}>
         {Array.from({ length: totalPages }, (_, i) => (
           <button
@@ -178,3 +167,4 @@ export default function BookingsManagement() {
     </div>
   );
 }
+

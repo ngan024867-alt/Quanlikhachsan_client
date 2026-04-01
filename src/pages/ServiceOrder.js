@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import "../App.css";
 
 export default function ServiceOrder() {
@@ -9,16 +9,13 @@ export default function ServiceOrder() {
 
   const token = localStorage.getItem("token");
 
-  // Lấy lịch sử dịch vụ của chính user từ token
   useEffect(() => {
     fetchOrders();
   }, []);
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/services/my", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/services/my");
       setOrders(res.data || []);
     } catch (err) {
       console.error("Lỗi lấy dịch vụ:", err);
@@ -31,12 +28,10 @@ export default function ServiceOrder() {
     try {
       const currentTime = new Date();
 
-      await axios.post("http://localhost:5000/api/services", {
+      await api.post("/services", {
         services,
         time: currentTime,
         roomNumber
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
 
       alert("Đặt dịch vụ thành công!");
@@ -107,3 +102,4 @@ export default function ServiceOrder() {
     </div>
   );
 }
+

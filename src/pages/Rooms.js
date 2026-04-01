@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
@@ -25,9 +25,7 @@ export default function Rooms() {
 
   const fetchRooms = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/rooms", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/rooms");
       setRooms(res.data);
     } catch (err) {
       console.error(err);
@@ -40,14 +38,11 @@ export default function Rooms() {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/api/bookings", {
-        user: userId,
+      await api.post("/bookings", {
         room: selectedRoom._id,
         checkin,
         checkout,
         services
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       alert("Đặt phòng thành công!");
       setSelectedRoom(null);

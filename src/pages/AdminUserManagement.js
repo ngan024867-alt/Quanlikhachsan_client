@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
@@ -24,9 +24,7 @@ export default function AdminUserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/users");
       setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -35,9 +33,7 @@ export default function AdminUserManagement() {
 
   const handleLockToggle = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/users/${id}/lock`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(`/users/${id}/lock`);
       alert("Cập nhật trạng thái tài khoản thành công!");
       fetchUsers();
     } catch (err) {
@@ -51,9 +47,7 @@ export default function AdminUserManagement() {
       return;
     }
     try {
-      await axios.put(`http://localhost:5000/api/users/${id}/password`, { newPassword }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(`/users/${id}/password`, { newPassword });
       alert("Mật khẩu đã được cập nhật!");
       setNewPassword("");
       setSelectedUser(null);
@@ -69,9 +63,7 @@ export default function AdminUserManagement() {
       return;
     }
     try {
-      await axios.post(`http://localhost:5000/api/users/${id}/notify`, { message: notification }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post(`/users/${id}/notify`, { message: notification });
       alert("Thông báo đã được gửi!");
       setNotification("");
       setSelectedUser(null);
@@ -85,7 +77,6 @@ export default function AdminUserManagement() {
     <div className="App-header">
       <h2>Quản lý tài khoản người dùng</h2>
 
-      {/* Bảng danh sách user */}
       <div className="table-container">
         <table className="booking-table">
           <thead>
@@ -125,13 +116,11 @@ export default function AdminUserManagement() {
         </table>
       </div>
 
-      {/* Khối quản lý riêng cho user được chọn */}
       {selectedUser && (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
           <div className="table-container" style={{ maxWidth: "600px", width: "100%" }}>
             <h3 style={{ textAlign: "center" }}>Quản lý: {selectedUser.username}</h3>
 
-            {/* Khối cập nhật mật khẩu */}
             <div style={{ marginBottom: "20px", textAlign: "center" }}>
               <h4>Cập nhật mật khẩu</h4>
               <input
@@ -150,7 +139,6 @@ export default function AdminUserManagement() {
               </button>
             </div>
 
-            {/* Khối gửi thông báo */}
             <div style={{ textAlign: "center" }}>
               <h4>Gửi thông báo</h4>
               <input
@@ -173,3 +161,4 @@ export default function AdminUserManagement() {
     </div>
   );
 }
+
